@@ -11,8 +11,8 @@ def home():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if flask.request.method == 'POST':
-        username = flask.request.form.get()
-        password = flask.request.form.get()
+        username = flask.request.form.get("username")
+        password = flask.request.form.get("password")
     return flask.render_template('login.html')
 
 if __name__ == "__main__":
