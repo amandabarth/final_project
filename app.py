@@ -4,10 +4,6 @@ import pandas as pd
 
 app = flask.Flask(__name__)
 
-@app.route("/")
-def base():
-    return flask.render_template("base.html")
-
 @app.route("/browse")
 def browse():
     return flask.render_template("browse.html")
@@ -25,7 +21,7 @@ def user_fav():
     return flask.render_template("user_fav.html")
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
 def login():
     if flask.request.method == 'POST':
         username = flask.request.form.get("username")
