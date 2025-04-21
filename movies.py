@@ -8,4 +8,6 @@ cur = con.cursor()
 df_movies = pd.read_csv('imdb_top_1000.csv')
 df_movies.to_sql('Movies', con, if_exists='replace', index=True)
 
+#TODO: Add code for users and user_fav tables
+
 con.close()
