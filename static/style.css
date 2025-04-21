@@ -26,6 +26,14 @@ nav ul{
 
 }
 
+/* TO DO: make container for user and pass form  */
+.info-container {
+
+}
+
+
+
+
 .movie-container {
     display: flex;
     justify-content: space-between;
