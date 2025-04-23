@@ -12,10 +12,20 @@ def browse():
 def get_all_movies():
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    cur.exexute('''SELECT Poster_Link,Series_Title,Released_Year,Certificate,Runtime,Genre,IMDB_Rating,Overview,Director FROM Movies;''')
+    cur.execute('''SELECT 'index', Poster_Link, Series_Title, Released_Year, Certificate, Runtime, Genre,IMDB_Rating, Overview, Director FROM Movies;''')
     movies = cur.fetchall()
     con.close()
     return movies
+
+@app.route("/add_fav/<path:user_id>/<path:movie_title>")
+def add_fav(user_id, movie_title):
+    con = sqlite3.connect("movies.db")
+    cur = con.cursor()
+    #TODO: get user_id here???
+    user_id = 1
+    cur.execute(f'''INSERT INTO User_Fav (user_id, title) VALUES ({user_id}, {movie_title}); ''')
+    con.close()
+    return flask.render_template("browse.html")
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
@@ -40,15 +50,16 @@ def stats():
     #TODO: What is going on the stats page?
     return flask.render_template("stats.html")
 
-@app.route("/user_fav")
-def user_fav():
+@app.route("/user_fav/<path: user_id>")
+def user_fav(user_id):
     #TODO: How to get username passed to here?
-    return flask.render_template("user_fav.html")
+    favorites = get_user_fav(user_id)
+    return flask.render_template("user_fav.html", favorites=favorites)
 
-def get_user_fav(username):
+def get_user_fav(user_id):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    cur.execute(f'''SELECT Movies.Poster_Link, Movies.Series_Title FROM Users JOIN User_Fav JOIN Movies WHERE Users.username='{username}';''')
+    cur.execute(f'''SELECT Movies.Poster_Link, Movies.Series_Title FROM Users JOIN User_Fav JOIN Movies WHERE Users.user_id='{user_id}';''')
     user = cur.fetchall()
     con.close()
     return user
