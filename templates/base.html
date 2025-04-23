@@ -5,33 +5,26 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="style.css">
 
-  <title>Database Systems</title>
+  <title>{% block title %}IMDB Database{% endblock %}</title>
 
 </head>
 <body>
-
+    <header>
     <nav>
-        <ul>
-            <!-- Other pages links -->
-            <li><a href="login.html">User Sign-in</a></li>
-            <li><a href="browse.html">Browse Media</a></li>
-            <li><a href="search.html">Search</a></li>
-            <li><a href="stats.html">Stats Page</a></li>
-            <li><a href="user_fav.html">User Favorites Pages</a></li>
-        </ul>
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('browse') }}">Browse</a>
+        <a href="{{ url_for('search') }}">Search</a>
+        <a href="{{ url_for('stats') }}">Stats</a>
+        <a href="{{ url_for('user_fav') }}">Favorites</a>
     </nav>
 
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 
 
 </body>
 
-{% block content%}
-{%end block%}
-
-
 </html>
-
-
-
-
-

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h2>Search for a Movie or Show</h2>
+<form method="POST">
+    <input type="text" name="query" placeholder="Search title">
+    <button type="submit">Search</button>
+</form>
+<div class="movie-container">
+    {% for movie in results %}
+    <div class="movie-card">
+        <h3>{{ movie.title }}</h3>
+        <p>{{ movie.description[:100] }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
