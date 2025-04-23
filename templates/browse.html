@@ -7,10 +7,17 @@
 <div class="movie-container">
   {% for movie in movies %}
     <div class="movie-card">
+<<<<<<< HEAD
       <h3>{{ movie.title }}</h3>
       <p>{{ movie.description[:100] }}...</p>
       <p>Rating: {{ movie.rating }}</p>
       <a href="{{ url_for('add_fav', movie_id=movie.movie_id) }}">Add to Favorites</a>
+=======
+      <h3>{{ movie[2] }}</h3>
+      <p>{{ movie[8][:100] }}...</p>
+      <p>Rating: {{ movie[7] }}</p>
+      <a href="{{ url_for('add_fav', movie_title=movie[2]) }}">Add to Favorites</a>
+>>>>>>> af7cba9e3e5d4055bff4e45713df5eead0033a4e
     </div>
   {% endfor %}
 </div>
