@@ -17,10 +17,14 @@ def get_all_movies():
     con.close()
     return movies
 
-@app.route("/add_fav/<path:user_id>/<path:movie_id>/<path:movie_title>")
-def add_fav(user_id, movie_id, movie_title):
+@app.route("/add_fav")
+def add_fav():
+    user_id = flask.request.args.get("user_id")
+    movie_id = flask.request.args.get("movie_id")
+    movie_title = flask.request.args.get("movie_title")
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
+    #TODO: format user_fav table types
     cur.execute(f'''INSERT INTO User_Fav (user_id, movie_id, title) VALUES ({user_id}, {movie_id},{movie_title}); ''')
     con.close()
     return flask.render_template("browse.html")
