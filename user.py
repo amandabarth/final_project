@@ -6,7 +6,7 @@ import random
 # Initialize Faker library
 fake = Faker()
 
-con = sqlite3.connect('user.db')
+con = sqlite3.connect('movies.db')
 cur = con.cursor()
 
 # Create users table
