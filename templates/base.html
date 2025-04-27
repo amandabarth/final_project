@@ -12,10 +12,10 @@
     <header>
     <nav>
         <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('browse') }}">Browse</a>
+        <a href="{{ url_for('browse', user_id=user_id) }}">Browse</a>
         <a href="{{ url_for('search') }}">Search</a>
-        <a href="{{ url_for('stats') }}">Stats</a>
-        <a href="{{ url_for('user_fav') }}">Favorites</a>
+        <a href="{{ url_for('stats', user_id = user_id) }}">Stats</a>
+        <a href="{{ url_for('user_fav', user_id=user_id) }}">Favorites</a>
     </nav>
 
     </header>

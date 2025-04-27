@@ -5,8 +5,8 @@
 <div class="movie-container">
     {% for movie in favorites %}
     <div class="movie-card">
-        <h3>{{ movie.title }}</h3>
-        <p>{{ movie.description[:100] }}...</p>
+        <h3>{{ movie[1] }}</h3>
+        <p>{{ movie[2][:100] }}...</p>
     </div>
     {% endfor %}
 </div>

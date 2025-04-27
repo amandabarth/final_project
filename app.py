@@ -4,10 +4,10 @@ import pandas as pd
 
 app = flask.Flask(__name__)
 
-@app.route("/browse")
-def browse():
+@app.route("/browse/<user_id>")
+def browse(user_id):
     movies = get_all_movies()
-    return flask.render_template("browse.html", movies=movies)
+    return flask.render_template("browse.html", user_id=user_id, movies=movies)
 
 def get_all_movies():
     con = sqlite3.connect("movies.db")
@@ -25,19 +25,20 @@ def add_fav():
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     #TODO: format user_fav table types
-    cur.execute(f'''INSERT INTO Favorites (user_id, movie_id, title) VALUES ({user_id}, {movie_id},{movie_title}); ''')
+    cur.execute(f'''INSERT INTO Favorites (user_id, movie_id) VALUES ({user_id}, {movie_id}); ''')
     con.close()
-    return flask.render_template("browse.html")
+    return flask.render_template("browse.html", user_id=user_id)
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
     #1. get user input from form
+    movies = []
     if flask.request.method == 'POST':
-        search = flask.request.form.get("search")
+        search = flask.request.form.get("query")
         # 2. use search to get all possible movies
         movies = search_movies(search)
     # 3. render template with movies as input
-    return flask.render_template("search.html", movies=movies)
+    return flask.render_template("search.html", results=movies)
 
 def search_movies(param: str):
     con = sqlite3.connect("movies.db")
@@ -52,17 +53,17 @@ def stats():
     #TODO: What is going on the stats page?
     return flask.render_template("stats.html")
 
-@app.route("/user_fav/<path: user_id>")
+@app.route("/user_fav/<user_id>")
 def user_fav(user_id):
     #TODO: How to get username passed to here?
-    user_id = 1
     favorites = get_user_fav(user_id)
-    return flask.render_template("user_fav.html", favorites=favorites)
+    return flask.render_template("user_fav.html", user_id=user_id, favorites=favorites)
 
 def get_user_fav(user_id):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    cur.execute(f'''SELECT Movies.Poster_Link, Movies.Series_Title FROM Users JOIN User_Fav JOIN Movies WHERE Users.user_id='{user_id}';''')
+    cur.execute(f'''SELECT Movies.Poster_Link, Movies.Series_Title, Movies.Overview 
+                    FROM Users JOIN Favorites ON Users.user_id=Favorites.user_id JOIN Movies ON Favorites.movie_id=Movies.'index' WHERE Users.user_id='{user_id}';''')
     user = cur.fetchall()
     con.close()
     return user
@@ -73,9 +74,8 @@ def login():
         username = flask.request.form.get("username")
         password = flask.request.form.get("password")
         user_info = get_user(username)
-        if user_info[1] == password: 
-            #this is not a secure way to save a password and need user table formatting to make sure the correct info is being accessed
-            return flask.render_template('browse.html')
+        if user_info[3] == password: 
+            return flask.redirect(flask.url_for("browse", user_id=user_info[0]))
         else:
             return "<p>Incorrect Username or Password. Try Again</p>" #we could also do flash error messages
     return flask.render_template('login.html')
@@ -84,7 +84,7 @@ def get_user(username: str):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     cur.execute(f'''SELECT * FROM Users WHERE username='{username}';''')
-    user = cur.fetchall()
+    user = cur.fetchone()
     con.close()
     return user
 
