@@ -52,9 +52,8 @@ def stats():
     #TODO: What is going on the stats page?
     return flask.render_template("stats.html")
 
-#@app.route("/user_fav/<path:user_id>")
-@app.route("/user_fav")
-def user_fav():
+@app.route("/user_fav/<path: user_id>")
+def user_fav(user_id):
     #TODO: How to get username passed to here?
     user_id = 1
     favorites = get_user_fav(user_id)

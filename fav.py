@@ -3,7 +3,7 @@ import pandas as pd
 import random
 
 
-con = sqlite3.connect('movies.db')
+con = sqlite3.connect('user.db')
 cur = con.cursor()
 
 movies = pd.read_csv('imdb_top_1000.csv')
