@@ -25,7 +25,7 @@ def add_fav():
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     #TODO: format user_fav table types
-    cur.execute(f'''INSERT INTO User_Fav (user_id, movie_id, title) VALUES ({user_id}, {movie_id},{movie_title}); ''')
+    cur.execute(f'''INSERT INTO Favorites (user_id, movie_id, title) VALUES ({user_id}, {movie_id},{movie_title}); ''')
     con.close()
     return flask.render_template("browse.html")
 
