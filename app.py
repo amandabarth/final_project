@@ -103,12 +103,55 @@ def get_user(username: str):
     return user
 
 """
-@app.route("/user_info/<user_id>")
+@app.route("/create_account", methods=['GET', 'POST'])
+def create_account():
+    if flask.request.method == 'POST':
+        username = flask.request.form.get("username")
+        email = flask.request.form.get("email")
+        password = flask.request.form.get("password")
+        confirm_password = flask.request.form.get("confirm_password")
+        if password != confirm_password:
+            return "<p>Passwords do not match</p>"
+        else:
+            user_id = create_new_account(username, password, confirm_password)
+            return flask.redirect("browse", user_id=user_id)
+    return flask.render_template("create_account.html")
+
+def create_new_account(username, password, confirm_password):
+    con = sqlite3.connect("movies.db")
+    cur = con.cursor()
+    time #TODO: get time here ALSO THIS MAY NOT AUTOFILL USER_ID
+    cur.execute(f'''INSERT INTO Users (username, email, password, signup_date) VALUES ({username}, {email}, {password}, {signup_date});''')
+    cur.execute(f'''SELECT * FROM Users WHERE username='{username}';''')
+    user = cur.fetchone()
+    con.close()
+    return user[0]
+
+@app.route("/user_info/<user_id>", methods=['GET', 'POST'])
 def user_info(user_id):
     #TODO: Show user info and allow them to change password and delete account
+    if flask.request.method == 'POST':
+        if flask.request.form.get("remove"):
+            
+    user_info = get_user_info(user_id)
+    flask.render_template('user_info.html', user_id=user_id, user_info = user_info)
 
+def get_user_info(user_id):
+    con = sqlite3.connect("movies.db")
+    cur = con.cursor()
+    cur.execute(f'''SELECT * FROM Users WHERE user_id={user_id};''')
+    user = cur.fetchone()
+    con.close()
+    return user
 
-
+def remove_user(user_id):
+    con = sqlite3.connect("movies.db")
+    cur = con.cursor()
+    cur.execute(f'''DELETE FROM Users WHERE user_id={user_id};''')
+    user = cur.fetchone()
+    con.close()
+    return user
+    
 """
 
 if __name__ == "__main__":
