@@ -7,6 +7,7 @@ app = flask.Flask(__name__)
 @app.route("/browse/<user_id>")
 def browse(user_id):
     movies = get_all_movies()
+    update=""
     return flask.render_template("browse.html", user_id=user_id, movies=movies)
 
 def get_all_movies():
@@ -21,8 +22,8 @@ def get_all_movies():
 def add_fav():
     user_id = flask.request.args.get("user_id")
     movie_id = flask.request.args.get("movie_id")
-    add_fav_movie(user_id, movie_id)
-    return flask.redirect(flask.url_for("browse", user_id=user_id))
+    add_fav_movie(user_id, movie_id) #TODO: Add case for if user tries to add movie thats already in favorites
+    return flask.render_template("browse.html", user_id=user_id, update="New Favorite Movie Added")
 
 def add_fav_movie(user_id, movie_id):
     con = sqlite3.connect("movies.db")
@@ -35,7 +36,7 @@ def remove_fav():
     user_id = flask.request.args.get("user_id")
     movie_id = flask.request.args.get("movie_id")
     remove_fav_movie(user_id, movie_id)
-    return flask.redirect(flask.url_for("browse", user_id=user_id))
+    return flask.redirect(flask.url_for("user_fav", user_id=user_id, update="Favorite Movie Removed"))
 
 def remove_fav_movie(user_id, movie_id):
     con = sqlite3.connect("movies.db")
@@ -57,7 +58,7 @@ def search(user_id):
 def search_movies(param: str):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    cur.execute(f'''SELECT Poster_Link,Series_Title,Released_Year,Certificate,Runtime,Genre,IMDB_Rating,Overview,Director FROM Movies WHERE Series_Title LIKE '%{param}%' OR Overview LIKE '%{param}%';''')
+    cur.execute(f'''SELECT Poster_Link,Series_Title,Released_Year,Certificate,Runtime,Genre,IMDB_Rating,Overview,Director FROM Movies WHERE Series_Title LIKE '%{param}%' OR Overview LIKE '% {param} %';''')
     movies = cur.fetchall()
     con.close()
     return movies
