@@ -30,6 +30,19 @@ def add_fav_movie(user_id, movie_id):
     cur.execute(f'''INSERT INTO Favorites (user_id, movie_id) VALUES ({user_id}, {movie_id}); ''')
     con.close()
 
+@app.route("/remove_fav")
+def remove_fav():
+    user_id = flask.request.args.get("user_id")
+    movie_id = flask.request.args.get("movie_id")
+    remove_fav_movie(user_id, movie_id)
+    return flask.redirect(flask.url_for("browse", user_id=user_id))
+
+def remove_fav_movie(user_id, movie_id):
+    con = sqlite3.connect("movies.db")
+    cur = con.cursor()
+    cur.execute(f'''DELETE FROM Favorites WHERE user_id={user_id} AND movie_id={movie_id}; ''')
+    con.close()
+
 @app.route("/search/<user_id>", methods=['GET', 'POST'])
 def search(user_id):
     #1. get user input from form
@@ -56,7 +69,7 @@ def stats(user_id):
 
 @app.route("/user_fav/<user_id>")
 def user_fav(user_id):
-    #TODO: How to get username passed to here?
+    #TODO: Make it so users can remove favs
     favorites = get_user_fav(user_id)
     return flask.render_template("user_fav.html", user_id=user_id, favorites=favorites)
 
@@ -88,6 +101,15 @@ def get_user(username: str):
     user = cur.fetchone()
     con.close()
     return user
+
+"""
+@app.route("/user_info/<user_id>")
+def user_info(user_id):
+    #TODO: Show user info and allow them to change password and delete account
+
+
+
+"""
 
 if __name__ == "__main__":
     app.run(debug=True)
