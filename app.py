@@ -7,7 +7,6 @@ app = flask.Flask(__name__)
 @app.route("/browse/<user_id>")
 def browse(user_id):
     movies = get_all_movies()
-    update=""
     return flask.render_template("browse.html", user_id=user_id, movies=movies)
 
 def get_all_movies():
@@ -23,12 +22,15 @@ def add_fav():
     user_id = flask.request.args.get("user_id")
     movie_id = flask.request.args.get("movie_id")
     add_fav_movie(user_id, movie_id) #TODO: Add case for if user tries to add movie thats already in favorites
-    return flask.render_template("browse.html", user_id=user_id, update="New Favorite Movie Added")
+    movies = get_all_movies()
+    return flask.render_template("browse.html", user_id=user_id,movies=movies, update="New Favorite Movie Added")
+
 
 def add_fav_movie(user_id, movie_id):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     cur.execute(f'''INSERT INTO Favorites (user_id, movie_id) VALUES ({user_id}, {movie_id}); ''')
+    con.commit()
     con.close()
 
 @app.route("/remove_fav")
@@ -36,12 +38,14 @@ def remove_fav():
     user_id = flask.request.args.get("user_id")
     movie_id = flask.request.args.get("movie_id")
     remove_fav_movie(user_id, movie_id)
-    return flask.redirect(flask.url_for("user_fav", user_id=user_id, update="Favorite Movie Removed"))
+    movies = get_user_fav(user_id)
+    return flask.render_template("user_fav.html", user_id=user_id, favorites=movies, update="Favorite Movie Removed")
 
 def remove_fav_movie(user_id, movie_id):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     cur.execute(f'''DELETE FROM Favorites WHERE user_id={user_id} AND movie_id={movie_id}; ''')
+    con.commit()
     con.close()
 
 @app.route("/search/<user_id>", methods=['GET', 'POST'])
@@ -77,7 +81,7 @@ def user_fav(user_id):
 def get_user_fav(user_id):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    cur.execute(f'''SELECT Movies.Poster_Link, Movies.Series_Title, Movies.Overview 
+    cur.execute(f'''SELECT Movies.movie_id, Movies.Series_Title, Movies.Overview 
                     FROM Users JOIN Favorites ON Users.user_id=Favorites.user_id JOIN Movies ON Favorites.movie_id=Movies.movie_id WHERE Users.user_id='{user_id}';''')
     user = cur.fetchall()
     con.close()
@@ -123,6 +127,7 @@ def create_new_account(username, password, confirm_password):
     cur = con.cursor()
     time #TODO: get time here ALSO THIS MAY NOT AUTOFILL USER_ID
     cur.execute(f'''INSERT INTO Users (username, email, password, signup_date) VALUES ({username}, {email}, {password}, {signup_date});''')
+    con.commit()
     cur.execute(f'''SELECT * FROM Users WHERE username='{username}';''')
     user = cur.fetchone()
     con.close()
