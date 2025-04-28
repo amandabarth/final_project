@@ -88,10 +88,10 @@ def login():
         username = flask.request.form.get("username")
         password = flask.request.form.get("password")
         user_info = get_user(username)
-        if user_info[3] == password: 
+        if user_info and user_info[3] == password : 
             return flask.redirect(flask.url_for("browse", user_id=user_info[0]))
         else:
-            return "<p>Incorrect Username or Password. Try Again</p>"
+            return flask.render_template("login.html", error="Incorrect Username or Password. Try Again")
     return flask.render_template('login.html')
 
 def get_user(username: str):
@@ -111,7 +111,7 @@ def create_account():
         password = flask.request.form.get("password")
         confirm_password = flask.request.form.get("confirm_password")
         if password != confirm_password:
-            return "<p>Passwords do not match</p>"
+            return flask.render_template("create_account.html", error="TRY AGAIN. Passwords do not match")
         else:
             user_id = create_new_account(username, password, confirm_password)
             return flask.redirect("browse", user_id=user_id)
