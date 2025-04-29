@@ -48,7 +48,6 @@ def remove_fav():
     movies = get_user_fav(user_id)
     return flask.render_template("user_fav.html", user_id=user_id, favorites=movies, update="Favorite Movie Removed")
 
-#TODO: Check to make sure entry exists before removing
 def remove_fav_movie(user_id, movie_id):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
@@ -82,7 +81,6 @@ def stats(user_id):
 
 @app.route("/user_fav/<user_id>")
 def user_fav(user_id):
-    #TODO: Make it so users can remove favs
     favorites = get_user_fav(user_id)
     return flask.render_template("user_fav.html", user_id=user_id, favorites=favorites)
 
