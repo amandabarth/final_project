@@ -11,6 +11,7 @@
     <div class="movie-card">
         <h3>{{ movie[1] }}</h3>
         <p>{{ movie[7][:100] }}</p>
+        <a href="{{ url_for('add_fav', user_id=user_id, movie_id=movie[0]) }}">Add to Favorites</a>
     </div>
     {% endfor %}
 </div>

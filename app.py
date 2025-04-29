@@ -69,7 +69,7 @@ def search(user_id):
 def search_movies(param: str):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    cur.execute(f'''SELECT Poster_Link,Series_Title,Released_Year,Certificate,Runtime,Genre,IMDB_Rating,Overview,Director FROM Movies WHERE Series_Title LIKE '%{param}%' OR Overview LIKE '% {param} %';''')
+    cur.execute(f'''SELECT movie_id,Series_Title,Released_Year,Certificate,Runtime,Genre,IMDB_Rating,Overview,Director FROM Movies WHERE Series_Title LIKE '%{param}%' OR Overview LIKE '% {param} %';''')
     movies = cur.fetchall()
     con.close()
     return movies
