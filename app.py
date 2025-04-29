@@ -21,17 +21,24 @@ def get_all_movies():
 def add_fav():
     user_id = flask.request.args.get("user_id")
     movie_id = flask.request.args.get("movie_id")
-    add_fav_movie(user_id, movie_id) #TODO: Add case for if user tries to add movie thats already in favorites
     movies = get_all_movies()
-    return flask.render_template("browse.html", user_id=user_id,movies=movies, update="New Favorite Movie Added")
+    if add_fav_movie(user_id, movie_id): 
+        return flask.render_template("browse.html", user_id=user_id,movies=movies, update="New Favorite Movie Added")
+    return flask.render_template("browse.html", user_id=user_id,movies=movies, update="Movie Already Saved to Favorites")
 
-#TODO: check to make sure movie and user pairing doesnt exist before adding
 def add_fav_movie(user_id, movie_id):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
+    cur.execute(f'''SELECT * FROM Favorites WHERE EXISTS(SELECT * FROM Favorites WHERE user_id={user_id} AND movie_id={movie_id});''')
+    exists = cur.fetchall()
+    print(exists)
+    if len(exists) >= 1:
+        con.close()
+        return False
     cur.execute(f'''INSERT INTO Favorites (user_id, movie_id) VALUES ({user_id}, {movie_id}); ''')
     con.commit()
     con.close()
+    return True
 
 @app.route("/remove_fav")
 def remove_fav():
