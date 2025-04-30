@@ -239,16 +239,16 @@ def create_account():
         if password != confirm_password:
             return flask.render_template("create_account.html", error="TRY AGAIN. Passwords do not match")
         else:
-            user_id = create_new_account(username, password, confirm_password)
-            return flask.redirect(flask.url_for("login"))
+            create_new_account(username, email, password)
+            return flask.render_template("login.html", error="Account Successfully Created. Please Sign in.")
     return flask.render_template("create_account.html")
 
-def create_new_account(username, email, password, confirm_password):
+def create_new_account(username, email, password):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    signup_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    signup_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(signup_date) 
-    cur.execute(f'''INSERT INTO Users (username, email, password, signup_date) VALUES ({username}, {email}, {password}, {signup_date});''')
+    cur.execute(f'''INSERT INTO Users (username, email, password, signup_date) VALUES ('{username}', '{email}', '{password}', '{signup_date}');''')
     con.commit()
     con.close()
 

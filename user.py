@@ -22,7 +22,7 @@ cur.execute('''
 
 # Generate fake users
 fake_users = []
-for _ in range(250):
+for _ in range(20):
     username = fake.user_name()
     email = fake.unique.email()
     password = fake.password(length=random.randint(8, 12))

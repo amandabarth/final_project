@@ -19,7 +19,7 @@
 </div>
 <div class="form-container">
     <h2>Delete Account</h2>
-    <form method="POST" action="{{url_for('login')}}">
+    <form method="POST" action="{{url_for('user_info', user_id=user_id)}}">
         <button type="submit" name="remove" value="remove">DELETE ACCOUNT</button>
     </form>
 </div>
