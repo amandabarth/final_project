@@ -93,14 +93,6 @@ def get_most_common_genre(df):
     return flat_genres.value_counts().idxmax()
 
 
-
-
-
-@app.route("/stats/<user_id>")
-def stats(user_id):
-    #TODO: What is going on the stats page?
-    return flask.render_template("stats.html", user_id=user_id)
-
 @app.route("/user_fav/<user_id>")
 def user_fav(user_id):
     favorites = get_user_fav(user_id)
