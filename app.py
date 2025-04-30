@@ -74,6 +74,27 @@ def search_movies(param: str):
     con.close()
     return movies
 
+# Add helper functions for stats
+
+def get_user_count():
+    con = sqlite3.connect("movies.db")
+    cur = con.cursor()
+    cur.execute("SELECT COUNT(*) FROM Users")
+    count = cur.fetchone()[0]
+    con.close()
+    return count
+
+
+def get_most_common_genre(df):
+    # Some rows might have multiple genres separated by commas
+    all_genres = df['Genre'].dropna().str.split(', ')
+    flat_genres = all_genres.explode()
+    return flat_genres.value_counts().idxmax()
+
+
+
+
+
 @app.route("/stats/<user_id>")
 def stats(user_id):
     #TODO: What is going on the stats page?
@@ -112,6 +133,116 @@ def get_user(username: str):
     user = cur.fetchone()
     con.close()
     return user
+
+@app.route("/stats/<user_id>")
+def stats(user_id):
+    con = sqlite3.connect("movies.db")
+    df = pd.read_sql_query("SELECT * FROM Movies", con)
+    con.close()
+
+    # Clean Runtime (assumes format like '120 min')
+    df['Runtime'] = df['Runtime'].str.extract(r'(\d+)').astype(float)
+
+    # Drop missing values
+    df = df.dropna(subset=['IMDB_Rating', 'Runtime'])
+
+    stats_data = {
+        'rating': {
+            'mean': round(df['IMDB_Rating'].mean(), 2),
+            'min': round(df['IMDB_Rating'].min(), 2),
+            'max': round(df['IMDB_Rating'].max(), 2),
+            'median': round(df['IMDB_Rating'].median(), 2),
+            'std_dev': round(df['IMDB_Rating'].std(), 2)
+        },
+        'run_time': {
+            'mean': round(df['Runtime'].mean(), 2),
+            'min': round(df['Runtime'].min(), 2),
+            'max': round(df['Runtime'].max(), 2),
+            'median': round(df['Runtime'].median(), 2),
+            'std_dev': round(df['Runtime'].std(), 2)
+        }
+    }
+
+    # Extra stats
+    total_users = get_user_count()
+    total_movies = len(df)
+    pop_genre = get_most_common_genre(df)
+
+    return flask.render_template("stats.html",
+                                 user_id=user_id,
+                                 stats=stats_data,
+                                 total_users=total_users,
+                                 total_movies=total_movies,
+                                 avg_rating=stats_data['rating']['mean'],
+                                 avg_run_time=stats_data['run_time']['mean'],
+                                 pop_genre=pop_genre)
+
+
+
+
+
+@app.route("/admin/cleanup")
+def cleanup_movies_table():
+    conn = sqlite3.connect("movies.db")
+    cursor = conn.cursor()
+
+    cursor.executescript("""
+    CREATE TABLE IF NOT EXISTS Movies_cleaned (
+        movie_id INTEGER PRIMARY KEY,
+        Poster_Link TEXT,
+        Series_Title TEXT,
+        Released_Year TEXT,
+        Runtime TEXT,
+        Genre TEXT,
+        IMDB_Rating REAL,
+        Overview TEXT,
+        Director TEXT,
+        Star1 TEXT,
+        Star2 TEXT,
+        Star3 TEXT,
+        Star4 TEXT
+    );
+
+    INSERT INTO Movies_cleaned (
+        movie_id, Poster_Link, Series_Title, Released_Year,
+        Runtime, Genre, IMDB_Rating, Overview, Director,
+        Star1, Star2, Star3, Star4
+    )
+    SELECT
+        "index", Poster_Link, Series_Title, Released_Year,
+        Runtime, Genre, IMDB_Rating, Overview, Director,
+        Star1, Star2, Star3, Star4
+    FROM Movies
+    WHERE
+        Poster_Link IS NOT NULL AND
+        Series_Title IS NOT NULL AND
+        Released_Year IS NOT NULL AND
+        Runtime IS NOT NULL AND
+        Genre IS NOT NULL AND
+        IMDB_Rating IS NOT NULL AND
+        Overview IS NOT NULL AND
+        Director IS NOT NULL AND
+        Star1 IS NOT NULL AND
+        Star2 IS NOT NULL AND
+        Star3 IS NOT NULL AND
+        Star4 IS NOT NULL;
+
+    DROP TABLE Movies;
+
+    ALTER TABLE Movies_cleaned RENAME TO Movies;
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+
+
+
+
+
+
+
 
 """
 @app.route("/create_account", methods=['GET', 'POST'])
