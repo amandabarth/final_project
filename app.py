@@ -1,6 +1,7 @@
 import flask 
 import sqlite3
 import pandas as pd
+import datetime
 
 app = flask.Flask(__name__)
 
@@ -113,7 +114,7 @@ def get_user(username: str):
     con.close()
     return user
 
-"""
+
 @app.route("/create_account", methods=['GET', 'POST'])
 def create_account():
     if flask.request.method == 'POST':
@@ -125,20 +126,18 @@ def create_account():
             return flask.render_template("create_account.html", error="TRY AGAIN. Passwords do not match")
         else:
             user_id = create_new_account(username, password, confirm_password)
-            return flask.redirect("browse", user_id=user_id)
+            return flask.redirect(flask.url_for("login"))
     return flask.render_template("create_account.html")
 
-def create_new_account(username, password, confirm_password):
+def create_new_account(username, email, password, confirm_password):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    time #TODO: get time here ALSO THIS MAY NOT AUTOFILL USER_ID
+    signup_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(signup_date) 
     cur.execute(f'''INSERT INTO Users (username, email, password, signup_date) VALUES ({username}, {email}, {password}, {signup_date});''')
     con.commit()
-    cur.execute(f'''SELECT * FROM Users WHERE username='{username}';''')
-    user = cur.fetchone()
     con.close()
-    return user[0]
-"""
+
 @app.route("/user_info/<user_id>", methods=['GET', 'POST'])
 def user_info(user_id):
     #TODO: Show user info and allow them to change password and delete account
