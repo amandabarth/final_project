@@ -2,6 +2,8 @@ import flask
 import sqlite3
 import pandas as pd
 import datetime
+from flask import Flask, render_template, request, redirect, url_for
+
 
 app = flask.Flask(__name__)
 
@@ -93,6 +95,54 @@ def get_most_common_genre(df):
     return flat_genres.value_counts().idxmax()
 
 
+
+def get_user_movie_stats(user_id):
+    con = sqlite3.connect("movies.db")
+    query = '''
+        SELECT M.*
+        FROM Favorites F
+        JOIN Movies M ON F.movie_id = M.movie_id
+        WHERE F.user_id = ?
+    '''
+    df = pd.read_sql_query(query, con, params=(user_id,))
+    con.close()
+    return df
+
+def summarize_user_movies(df):
+    if df.empty:
+        return None
+
+    df['Runtime'] = df['Runtime'].str.extract(r'(\d+)').astype(float)
+
+    # Handle genre safely
+    if 'Genre' in df.columns and df['Genre'].notna().any():
+        genre_series = df['Genre'].dropna().str.split(', ').explode()
+        popular_genre = genre_series.value_counts().idxmax() if not genre_series.empty else 'N/A'
+    else:
+        popular_genre = 'N/A'
+
+    stats_data = {
+        'rating': {
+            'mean': round(df['IMDB_Rating'].mean(), 2),
+            'min': round(df['IMDB_Rating'].min(), 2),
+            'max': round(df['IMDB_Rating'].max(), 2),
+            'median': round(df['IMDB_Rating'].median(), 2),
+            'std_dev': round(df['IMDB_Rating'].std(), 2)
+        },
+        'run_time': {
+            'mean': round(df['Runtime'].mean(), 2),
+            'min': round(df['Runtime'].min(), 2),
+            'max': round(df['Runtime'].max(), 2),
+            'median': round(df['Runtime'].median(), 2),
+            'std_dev': round(df['Runtime'].std(), 2)
+        },
+        'fav_count': len(df),
+        'popular_genre': popular_genre
+    }
+
+    return stats_data
+
+
 @app.route("/user_fav/<user_id>", methods=["GET", "POST"])
 def user_fav(user_id):
     favorites = get_user_fav(user_id)
@@ -143,48 +193,61 @@ def get_user(username: str):
     con.close()
     return user
 
-@app.route("/stats/<user_id>")
+@app.route('/stats/<int:user_id>')
 def stats(user_id):
-    con = sqlite3.connect("movies.db")
-    df = pd.read_sql_query("SELECT * FROM Movies", con)
-    con.close()
+    con = sqlite3.connect('movies.db')
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
 
-    # Clean Runtime (assumes format like '120 min')
-    df['Runtime'] = df['Runtime'].str.extract(r'(\d+)').astype(float)
+    # Join Favorites with Movies for this user
+    query = """
+        SELECT M.*, F.user_id
+        FROM Favorites F
+        JOIN Movies M ON F.movie_id = M.movie_id
+        WHERE F.user_id = ?
+    """
+    df = pd.read_sql_query(query, con, params=(user_id,))
 
-    # Drop missing values
-    df = df.dropna(subset=['IMDB_Rating', 'Runtime'])
-
-    stats_data = {
-        'rating': {
-            'mean': round(df['IMDB_Rating'].mean(), 2),
-            'min': round(df['IMDB_Rating'].min(), 2),
-            'max': round(df['IMDB_Rating'].max(), 2),
-            'median': round(df['IMDB_Rating'].median(), 2),
-            'std_dev': round(df['IMDB_Rating'].std(), 2)
-        },
-        'run_time': {
-            'mean': round(df['Runtime'].mean(), 2),
-            'min': round(df['Runtime'].min(), 2),
-            'max': round(df['Runtime'].max(), 2),
-            'median': round(df['Runtime'].median(), 2),
-            'std_dev': round(df['Runtime'].std(), 2)
+    if df.empty:
+        stats = {
+            'rating': {'mean': 'N/A', 'min': 'N/A', 'max': 'N/A', 'median': 'N/A', 'std_dev': 'N/A'},
+            'run_time': {'mean': 'N/A', 'min': 'N/A', 'max': 'N/A', 'median': 'N/A', 'std_dev': 'N/A'},
+            'fav_count': 0,
+            'popular_genre': 'N/A'
         }
-    }
+    else:
+        df['Runtime_Min'] = df['Runtime'].str.extract(r'(\d+)').astype(float)
 
-    # Extra stats
-    total_users = get_user_count()
-    total_movies = len(df)
-    pop_genre = get_most_common_genre(df)
+        rating_stats = {
+            'mean': round(df['IMDB_Rating'].mean(), 2),
+            'min': df['IMDB_Rating'].min(),
+            'max': df['IMDB_Rating'].max(),
+            'median': df['IMDB_Rating'].median(),
+            'std_dev': round(df['IMDB_Rating'].std(), 2)
+        }
 
-    return flask.render_template("stats.html",
-                                 user_id=user_id,
-                                 stats=stats_data,
-                                 total_users=total_users,
-                                 total_movies=total_movies,
-                                 avg_rating=stats_data['rating']['mean'],
-                                 avg_run_time=stats_data['run_time']['mean'],
-                                 pop_genre=pop_genre)
+        runtime_stats = {
+            'mean': round(df['Runtime_Min'].mean(), 2),
+            'min': df['Runtime_Min'].min(),
+            'max': df['Runtime_Min'].max(),
+            'median': df['Runtime_Min'].median(),
+            'std_dev': round(df['Runtime_Min'].std(), 2)
+        }
+
+        fav_count = len(df)
+        df['Main_Genre'] = df['Genre'].str.split(',').str[0]
+        popular_genre = df['Main_Genre'].mode()[0] if not df['Main_Genre'].mode().empty else 'N/A'
+
+        stats = {
+            'rating': rating_stats,
+            'run_time': runtime_stats,
+            'fav_count': fav_count,
+            'popular_genre': popular_genre
+        }
+
+    con.close()
+    return render_template('stats.html', stats=stats, user_id=user_id)
+
 
 
 

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,20 +11,20 @@
     <header>
     <nav>
         <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('browse', user_id=user_id) }}">Browse</a>
-        <a href="{{ url_for('search', user_id=user_id) }}">Search</a>
-        <a href="{{ url_for('stats', user_id = user_id) }}">Stats</a>
-        <a href="{{ url_for('user_fav', user_id=user_id) }}">Favorites</a>
-        <a href="{{ url_for('user_info', user_id=user_id) }}">User Info</a>
+        {% if user_id %}
+            <a href="{{ url_for('browse', user_id=user_id) }}">Browse</a>
+            <a href="{{ url_for('search', user_id=user_id) }}">Search</a>
+            <a href="{{ url_for('stats', user_id=user_id) }}">Stats</a>
+            <a href="{{ url_for('user_fav', user_id=user_id) }}">Favorites</a>
+            <a href="{{ url_for('user_info', user_id=user_id) }}">User Info</a>
+        {% endif %}
     </nav>
-
     </header>
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-
 </body>
-
 </html>
+

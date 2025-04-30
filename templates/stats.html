@@ -1,8 +1,20 @@
 {% extends 'base.html' %}
+
 {% block title %}Stats{% endblock %}
+
 {% block content %}
 <h2>Statistics</h2>
 <ul>
+    <h3>
+        Your Favorite Movie Stats
+    </h3>
+    <li>Your Favorite Movie Count: {{ stats.fav_count }}</li>
+    <li>Your Most Popular Genre: {{ stats.popular_genre }}</li>
+
+    <br>
+    <h3>
+    
+    </h3>
     <li>Average Rating: {{ stats.rating.mean }}</li>
     <li>Min Rating: {{ stats.rating.min }}</li>
     <li>Max Rating: {{ stats.rating.max }}</li>
@@ -11,12 +23,14 @@
 
     <br>
 
+    <h3>
+        Statistics for All Movies
+    </h3>
     <li>Average Runtime: {{ stats.run_time.mean }}</li>
     <li>Min Runtime: {{ stats.run_time.min }}</li>
     <li>Max Runtime: {{ stats.run_time.max }}</li>
     <li>Median Runtime: {{ stats.run_time.median }}</li>
     <li>Runtime Std Dev: {{ stats.run_time.std_dev }}</li>
 </ul>
-<a href="{{ url_for('browse', user_id=user_id) }}">← Back to Browse</a>
-{% endblock %}
 
+{% endblock %}
