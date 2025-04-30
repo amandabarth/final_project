@@ -100,16 +100,16 @@ def user_fav(user_id):
     if flask.request.method == 'POST':
         search = flask.request.form.get("query")
         # 2. use search to get all possible movies
-        movies = search_fav_movies(search)
-    # 3. render template with movies as input
+        movies = search_fav_movies(user_id, search)
+        # 3. render template with movies as input
         return flask.render_template("user_fav.html", user_id=user_id, favorites=movies)
     return flask.render_template("user_fav.html", user_id=user_id, favorites=favorites)
 
-def search_fav_movies(param: str):
+def search_fav_movies(user_id, param: str):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     cur.execute(f'''SELECT Movies.movie_id, Movies.Series_Title, Movies.Overview 
-                    FROM Users JOIN Favorites ON Users.user_id=Favorites.user_id JOIN Movies ON Favorites.movie_id=Movies.movie_id WHERE Users.user_id='{user_id}' AND Movie.Series_Title LIKE '%{param}%' OR Movies.Overview LIKE '% {param} %';''')
+                    FROM Users JOIN Favorites ON Users.user_id=Favorites.user_id JOIN Movies ON Favorites.movie_id=Movies.movie_id WHERE Users.user_id='{user_id}' AND Movies.Series_Title LIKE '%{param}%';''')
     favorites = cur.fetchall()
     con.close()
     return favorites
