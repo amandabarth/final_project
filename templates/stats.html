@@ -3,8 +3,20 @@
 {% block content %}
 <h2>Statistics</h2>
 <ul>
-    <li>Total Users: {{ total_users }}</li>
-    <li>Total Movies: {{ total_movies }}</li>
-    <li>Average Rating: {{ avg_rating }}</li>
+    <li>Average Rating: {{ stats.rating.mean }}</li>
+    <li>Min Rating: {{ stats.rating.min }}</li>
+    <li>Max Rating: {{ stats.rating.max }}</li>
+    <li>Median Rating: {{ stats.rating.median }}</li>
+    <li>Rating Std Dev: {{ stats.rating.std_dev }}</li>
+
+    <br>
+
+    <li>Average Runtime: {{ stats.run_time.mean }}</li>
+    <li>Min Runtime: {{ stats.run_time.min }}</li>
+    <li>Max Runtime: {{ stats.run_time.max }}</li>
+    <li>Median Runtime: {{ stats.run_time.median }}</li>
+    <li>Runtime Std Dev: {{ stats.run_time.std_dev }}</li>
 </ul>
+<a href="{{ url_for('browse', user_id=user_id) }}">← Back to Browse</a>
 {% endblock %}
+
