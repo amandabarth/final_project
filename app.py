@@ -174,61 +174,6 @@ def stats(user_id):
 
 
 
-@app.route("/admin/cleanup")
-def cleanup_movies_table():
-    conn = sqlite3.connect("movies.db")
-    cursor = conn.cursor()
-
-    cursor.executescript("""
-    CREATE TABLE IF NOT EXISTS Movies_cleaned (
-        movie_id INTEGER PRIMARY KEY,
-        Poster_Link TEXT,
-        Series_Title TEXT,
-        Released_Year TEXT,
-        Runtime TEXT,
-        Genre TEXT,
-        IMDB_Rating REAL,
-        Overview TEXT,
-        Director TEXT,
-        Star1 TEXT,
-        Star2 TEXT,
-        Star3 TEXT,
-        Star4 TEXT
-    );
-
-    INSERT INTO Movies_cleaned (
-        movie_id, Poster_Link, Series_Title, Released_Year,
-        Runtime, Genre, IMDB_Rating, Overview, Director,
-        Star1, Star2, Star3, Star4
-    )
-    SELECT
-        "index", Poster_Link, Series_Title, Released_Year,
-        Runtime, Genre, IMDB_Rating, Overview, Director,
-        Star1, Star2, Star3, Star4
-    FROM Movies
-    WHERE
-        Poster_Link IS NOT NULL AND
-        Series_Title IS NOT NULL AND
-        Released_Year IS NOT NULL AND
-        Runtime IS NOT NULL AND
-        Genre IS NOT NULL AND
-        IMDB_Rating IS NOT NULL AND
-        Overview IS NOT NULL AND
-        Director IS NOT NULL AND
-        Star1 IS NOT NULL AND
-        Star2 IS NOT NULL AND
-        Star3 IS NOT NULL AND
-        Star4 IS NOT NULL;
-
-    DROP TABLE Movies;
-
-    ALTER TABLE Movies_cleaned RENAME TO Movies;
-    """)
-
-    conn.commit()
-    conn.close()
-
-
 @app.route("/create_account", methods=['GET', 'POST'])
 def create_account():
     if flask.request.method == 'POST':
