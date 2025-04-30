@@ -138,21 +138,24 @@ def create_new_account(username, password, confirm_password):
     user = cur.fetchone()
     con.close()
     return user[0]
-
+"""
 @app.route("/user_info/<user_id>", methods=['GET', 'POST'])
 def user_info(user_id):
     #TODO: Show user info and allow them to change password and delete account
     user_info = get_user_info(user_id)
     if flask.request.method == 'POST':
-        if flask.request.form.get("remove"):
+        if flask.request.form.get("remove") == "remove":
             remove_user(user_id)
             return flask.render_template("login.html", error="Account Successfully Removed")
-        elif flask.request.form.get("update_password"):
+        elif flask.request.form.get("update_password") == "update_password":
             current_password = flask.request.form.get("current_password")
             new_password = flask.request.form.get("new_password")
             confirm_new_password = flask.request.form.get("confirm_new_password")
             if user_info[3] == current_password and new_password == confirm_new_password:
                 update_password(user_id, new_password)
+                return flask.render_template('user_info.html', user_id=user_id, user_info=user_info, error='Password Reset Successfully')
+            else:
+                return flask.render_template('user_info.html', user_id=user_id, user_info=user_info ,error='Passwords did not match. Try Again.')
 
     return flask.render_template('user_info.html', user_id=user_id, user_info=user_info)
 
@@ -168,15 +171,16 @@ def update_password(user_id, new_password):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     cur.execute(f'''UPDATE Users SET password='{new_password}' WHERE user_id={user_id};''')
+    con.commit()
     con.close()
 
 def remove_user(user_id):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     cur.execute(f'''DELETE FROM Users WHERE user_id={user_id};''')
+    con.commit()
     con.close()
     
-"""
 
 if __name__ == "__main__":
     app.run(debug=True)
