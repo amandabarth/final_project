@@ -2,6 +2,13 @@
 {% block title %}Your Favorites{% endblock %}
 {% block content %}
 <h2>Your Favorite Movies</h2>
+<div class="form-container">
+<h2>Search for a Movie or Show</h2>
+<form method="POST">
+    <input type="text" name="query" placeholder="Search title">
+    <button type="submit">Search</button>
+</form>
+</div>
 <p>{{update}}</p>
 <div class="movie-container">
     {% for movie in favorites %}
