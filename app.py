@@ -13,7 +13,7 @@ def browse(user_id):
 def get_all_movies():
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    cur.execute('''SELECT movie_id, Poster_Link, Series_Title, Released_Year, Certificate, Runtime, Genre,IMDB_Rating, Overview, Director FROM Movies;''')
+    cur.execute('''SELECT movie_id, Poster_Link, Series_Title, Released_Year, Runtime, Genre, IMDB_Rating, Overview, Director FROM Movies;''')
     movies = cur.fetchall()
     con.close()
     return movies
