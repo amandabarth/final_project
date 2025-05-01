@@ -60,22 +60,30 @@ def remove_fav_movie(user_id, movie_id):
 
 @app.route("/search/<user_id>", methods=['GET', 'POST'])
 def search(user_id):
-    #1. get user input from form
     movies = []
+
     if flask.request.method == 'POST':
-        search = flask.request.form.get("query")
-        # 2. use search to get all possible movies
-        movies = search_movies(search)
-    # 3. render template with movies as input
+        search_query = flask.request.form.get("query")
+        if search_query:
+            # Use search query to fetch movies
+            movies = search_movies(search_query)
+    
+    # Render search page 
     return flask.render_template("search.html", user_id=user_id, results=movies)
 
 def search_movies(param: str):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
-    cur.execute(f'''SELECT movie_id,Series_Title,Released_Year,Certificate,Runtime,Genre,IMDB_Rating,Overview,Director FROM Movies WHERE Series_Title LIKE '%{param}%' OR Overview LIKE '% {param} %';''')
+    cur.execute('''SELECT movie_id, Series_Title, Released_Year, Runtime, Genre, IMDB_Rating, Overview, Director 
+                   FROM Movies 
+                   WHERE Series_Title LIKE ? OR Overview LIKE ? 
+                   LIMIT 10;''', 
+                ('%' + param + '%', '%' + param + '%'))
     movies = cur.fetchall()
     con.close()
     return movies
+
+
 
 # Add helper functions for stats
 
@@ -114,7 +122,7 @@ def summarize_user_movies(df):
 
     df['Runtime'] = df['Runtime'].str.extract(r'(\d+)').astype(float)
 
-    # Handle genre safely
+    # Handle genre 
     if 'Genre' in df.columns and df['Genre'].notna().any():
         genre_series = df['Genre'].dropna().str.split(', ').explode()
         popular_genre = genre_series.value_counts().idxmax() if not genre_series.empty else 'N/A'
@@ -199,7 +207,7 @@ def stats(user_id):
     con.row_factory = sqlite3.Row
     cur = con.cursor()
 
-    # Join Favorites with Movies for this user
+    # join favorites with movies for user
     query = """
         SELECT M.*, F.user_id
         FROM Favorites F

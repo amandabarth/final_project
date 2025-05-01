@@ -3,34 +3,37 @@
 {% block title %}Stats{% endblock %}
 
 {% block content %}
-<h2>Statistics</h2>
-<ul>
-    <h3>
-        Your Favorite Movie Stats
-    </h3>
-    <li>Your Favorite Movie Count: {{ stats.fav_count }}</li>
-    <li>Your Most Popular Genre: {{ stats.popular_genre }}</li>
+<h1 class="page-title">Statistics</h1>
 
-    <br>
-    <h3>
-    
-    </h3>
-    <li>Average Rating: {{ stats.rating.mean }}</li>
-    <li>Min Rating: {{ stats.rating.min }}</li>
-    <li>Max Rating: {{ stats.rating.max }}</li>
-    <li>Median Rating: {{ stats.rating.median }}</li>
-    <li>Rating Std Dev: {{ stats.rating.std_dev }}</li>
+<div class="stats-container">
+    <section class="stats-box">
+        <h2>Your Favorite Movie Stats</h2>
+        <ul>
+            <li><strong>Your Favorite Movie Count:</strong> {{ stats.fav_count }}</li>
+            <li><strong>Your Most Popular Genre:</strong> {{ stats.popular_genre }}</li>
+        </ul>
+    </section>
 
-    <br>
+    <section class="stats-box">
+        <h2>Rating Statistics for Your Favorites</h2>
+        <ul>
+            <li><strong>Average Rating:</strong> {{ stats.rating.mean }}</li>
+            <li><strong>Min Rating:</strong> {{ stats.rating.min }}</li>
+            <li><strong>Median Rating:</strong> {{ stats.rating.median }}</li>
+            <li><strong>Max Rating:</strong> {{ stats.rating.max }}</li>
+            <li><strong>Rating Std Dev:</strong> {{ stats.rating.std_dev }}</li>
+        </ul>
+    </section>
 
-    <h3>
-        Statistics for All Movies
-    </h3>
-    <li>Average Runtime: {{ stats.run_time.mean }}</li>
-    <li>Min Runtime: {{ stats.run_time.min }}</li>
-    <li>Max Runtime: {{ stats.run_time.max }}</li>
-    <li>Median Runtime: {{ stats.run_time.median }}</li>
-    <li>Runtime Std Dev: {{ stats.run_time.std_dev }}</li>
-</ul>
+    <section class="stats-box">
+        <h2>All Movies Statistics</h2>
+        <ul>
+            <li><strong>Average Runtime:</strong> {{ stats.run_time.mean }}</li>
+            <li><strong>Min Runtime:</strong> {{ stats.run_time.min }}</li>
+            <li><strong>Median Runtime:</strong> {{ stats.run_time.median }}</li>
+            <li><strong>Max Runtime:</strong> {{ stats.run_time.max }}</li>            <li><strong>Runtime Std Dev:</strong> {{ stats.run_time.std_dev }}</li>
+        </ul>
+    </section>
+</div>
 
 {% endblock %}

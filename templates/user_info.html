@@ -1,26 +1,43 @@
 {% extends 'base.html' %}
 {% block title %}User Info{% endblock %}
+
 {% block content %}
-<div>
-    <h2>Details </h2>
-    <p>Username: {{user_info[1]}}</p>
-    <p>Email: {{user_info[2]}}</p>
-    <p>SignUp Date: {{user_info[4]}}</p>
+<div class="form-container">
+    <h2>User Details</h2>
+    <p><strong>Username:</strong> {{ user_info[1] }}</p>
+    <p><strong>Email:</strong> {{ user_info[2] }}</p>
+    <p><strong>Sign-Up Date:</strong> {{ user_info[4] }}</p>
 </div>
+
 <div class="form-container">
     <h2>Change Password</h2>
-    <p>{{error}}</p>
-    <form method="POST" action="{{ url_for('user_info', user_id=user_id) }}">
-        <input type="password" name="current_password" placeholder="Current Password" required>
-        <input type="password" name="new_password" placeholder="New Password" required>
-        <input type="password" name="confirm_new_password" placeholder="Confirm Password" required>
+    {% if error %}
+        <p class="error-message">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="{{ url_for('user_info', user_id=user_id) }}" class="vertical-form">
+        <div class="form-group">
+            <label for="current_password">Current Password</label>
+            <input type="password" name="current_password" id="current_password" required>
+        </div>
+        <div class="form-group">
+            <label for="new_password">New Password</label>
+            <input type="password" name="new_password" id="new_password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirm_new_password">Confirm New Password</label>
+            <input type="password" name="confirm_new_password" id="confirm_new_password" required>
+        </div>
         <button type="submit" name="update_password" value="update_password">Update Password</button>
     </form>
 </div>
-<div class="form-container">
+
+
+<div class="form-container danger-zone">
     <h2>Delete Account</h2>
-    <form method="POST" action="{{url_for('user_info', user_id=user_id)}}">
-        <button type="submit" name="remove" value="remove">DELETE ACCOUNT</button>
+    <form method="POST" action="{{ url_for('user_info', user_id=user_id) }}">
+        <button type="submit" name="remove" value="remove" class="danger-button">
+            DELETE ACCOUNT
+        </button>
     </form>
 </div>
 {% endblock %}

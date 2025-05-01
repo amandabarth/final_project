@@ -1,3 +1,4 @@
+/* body style */
 body {
     font-family: Arial, sans-serif;
     background: #f5f5f5;
@@ -9,34 +10,215 @@ header {
     background: #333;
     color: white;
     padding: 1rem;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
 }
 
+/* style links in header */
 nav a {
-    margin-right: 1rem;
+    margin-right: 1.5rem; 
     color: white;
     text-decoration: none;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
 }
 
+
+/* page layout */
 main {
     padding: 2rem;
 }
 
-/* Form containers */
-
-.form-container, .movie-container {
-    max-width: 800px;
-    margin: 0 auto;
+.page-title {
+    font-size: 2.5rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
-.movie-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+/* search form container */
+.search-form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    text-align: center;
+}
+
+
+.search-form-container h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 1rem;
 }
 
+/* for search bar */
+#search-bar {
+    width: 100%;
+    max-width: 500px;
+    padding: 1rem;
+    font-size: 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* for login/signup input */
+input[type="text"], input[type="password"] {
+    width: 75%;
+    max-width: 250px;
+    padding: .5rem;
+    font-size: 1.2rem;
+    border: 1px solid #ccc;
+}
+
+/* button style */
+button {
+    padding: 1.1rem;
+    font-size: 1rem;
+    max-width: 500px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+}
+
+
+/* movies cards layout */
+.movie-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* different design for movies cards layout for different pages */
+.movie-container h3 {
+    font-size: 1.6rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+/* movie cards to display movie titles in grid */
 .movie-card {
     background: white;
-    padding: 1rem;
+    padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.movie-card h3 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.movie-card p {
+    font-size: 1rem;
+    color: #777;
+}
+
+/* design favorite buttons */
+/* used this container for both add and remove favorites button */
+.rmv-from-fav-btn {
+    display: inline-block;
+    padding: 0.7rem;
+    margin-top: 1rem;
+    color: white;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+}
+
+
+/* form styling for different pages */
+.form-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.form-container h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.sign-in-form {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* more form styling for user info page */
+.sign-in-form input[type="text"],
+.sign-in-form input[type="password"] {
+    padding: 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 80%;
+}
+
+/* more button styling */
+/* reusing the same style for every button looked weird */
+.sign-in-form button {
+    padding: 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+    width: 80%;
+}
+
+/* style delete account button */
+.danger-button{
+    background-color: red;
+}
+
+
+/* stats page container style */
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.stats-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.stats-box ul {
+    list-style: none;
+    font-size: 1.1rem;
+}
+
+
+/* login error message */
+.error-message{
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #AF0606;
 }

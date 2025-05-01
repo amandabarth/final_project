@@ -12,9 +12,9 @@
       <h3>{{ movie[2] }}</h3>
       <p>{{ movie[7][:100] }}...</p>
       <p>Rating: {{ movie[6] }}</p>
-      <a href="{{ url_for('add_fav', user_id=user_id, movie_id=movie[0]) }}">Add to Favorites</a>
-    </div>
-  {% endfor %}
-</div>
-{% endblock %}
+          <a href="{{ url_for('add_fav', user_id=user_id, movie_id=movie[0]) }}" class="rmv-from-fav-btn">Add to Favorites</a>
+      </div>
+    {% endfor %}
+  </div>
+  {% endblock %}
 
