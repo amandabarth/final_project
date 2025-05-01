@@ -34,7 +34,6 @@ def add_fav_movie(user_id, movie_id):
     cur = con.cursor()
     cur.execute(f'''SELECT * FROM Favorites WHERE EXISTS(SELECT * FROM Favorites WHERE user_id={user_id} AND movie_id={movie_id});''')
     exists = cur.fetchall()
-    print(exists)
     if len(exists) >= 1:
         con.close()
         return False
@@ -279,7 +278,6 @@ def create_new_account(username, email, password):
     con = sqlite3.connect("movies.db")
     cur = con.cursor()
     signup_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print(signup_date) 
     cur.execute(f'''INSERT INTO Users (username, email, password, signup_date) VALUES ('{username}', '{email}', '{password}', '{signup_date}');''')
     con.commit()
     con.close()
