@@ -2,7 +2,11 @@ import flask
 import sqlite3
 import pandas as pd
 import datetime
-from flask import Flask, render_template, request, redirect, url_for
+from flask import render_template
+import matplotlib
+matplotlib.use('Agg')  # Use non-GUI backend
+import matplotlib.pyplot as plt
+
 
 
 app = flask.Flask(__name__)
@@ -229,7 +233,7 @@ def stats(user_id):
             'mean': round(df['IMDB_Rating'].mean(), 2),
             'min': df['IMDB_Rating'].min(),
             'max': df['IMDB_Rating'].max(),
-            'median': df['IMDB_Rating'].median(),
+            'median': round(df['IMDB_Rating'].median(), 2),
             'std_dev': round(df['IMDB_Rating'].std(), 2)
         }
 
@@ -254,10 +258,6 @@ def stats(user_id):
 
     con.close()
     return render_template('stats.html', stats=stats, user_id=user_id)
-
-
-
-
 
 
 @app.route("/create_account", methods=['GET', 'POST'])
@@ -324,6 +324,92 @@ def remove_user(user_id):
     con.commit()
     con.close()
     
+
+
+@app.route("/graph1")
+def graph1():
+    con = sqlite3.connect("movies.db")
+    df = pd.read_sql_query("SELECT Series_Title, IMDB_Rating FROM Movies WHERE IMDB_Rating IS NOT NULL", con)
+    con.close()
+
+    if df.empty:
+        return render_template("graph.html", chart_url=None, message="No movie data available.")
+
+    # Generate the histogram
+    plt.figure(figsize=(10, 7))
+    df['IMDB_Rating'].hist(bins=15, color='salmon', edgecolor='black')
+    plt.title("Distribution of IMDB Ratings")
+    plt.xlabel("IMDB Rating")
+    plt.ylabel("Number of Movies")
+    plt.tight_layout()
+    plt.grid(False)
+
+    # Save chart to static
+    chart_path = "static/movie_rating_chart.png"
+    plt.savefig(chart_path)
+    plt.close()
+
+    return render_template("graph.html", chart_url=chart_path, message=None)
+
+
+
+
+@app.route('/graph2')
+def graph2():
+    con = sqlite3.connect("movies.db")
+    df = pd.read_sql_query("SELECT Genre FROM Movies", con)
+    con.close()
+
+    # Split genres and count them
+    df['Genre'] = df['Genre'].str.split(', ')
+    genre_counts = df.explode('Genre')['Genre'].value_counts().head(10)
+
+    # Plot
+    plt.figure(figsize=(15, 10))
+    genre_counts.plot(kind='bar', color='skyblue')
+    plt.title('Top 10 Genres by Movie Count')
+    plt.xlabel('Genre')
+    plt.ylabel('Number of Movies')
+    plt.tight_layout()
+
+    chart_path = 'static/genre_chart.png'
+    plt.savefig(chart_path)
+    plt.close()
+
+    return render_template('graph.html', chart_url=chart_path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

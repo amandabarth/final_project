@@ -20,7 +20,7 @@ nav a {
     margin-right: 1.5rem; 
     color: white;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: .9rem;
     padding: 0.5rem 1rem;
     border-radius: 5px;
 }
@@ -73,7 +73,7 @@ main {
 }
 
 /* for login/signup input */
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"],input[type="username"], input[type="email"]  {
     width: 75%;
     max-width: 250px;
     padding: .5rem;
@@ -167,6 +167,20 @@ button {
     width: 100%;
 }
 
+
+.form2 {
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+
+
+
 /* more form styling for user info page */
 .sign-in-form input[type="text"],
 .sign-in-form input[type="password"] {
@@ -214,6 +228,68 @@ button {
     list-style: none;
     font-size: 1.1rem;
 }
+
+/* graph styling */
+.graph-container {
+    padding: 2rem;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+/* boxes for graphs */
+.chart-box {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+
+/* titles for graphs */
+.chart-box h3 {
+    font-size: 1.6rem;
+    color: #495057;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+/* Graph Image */
+.graph-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+.chart-box ul {
+    list-style: none;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* login error message */
