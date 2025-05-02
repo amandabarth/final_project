@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Graphs{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Data Visualization</h1>
+
+<div class="graph-container">
+    <section class="chart-box">
+        <h3>Graph 1: IMDB Ratings</h3>
+        <ul>
+            {% if message %}
+                <p class="error-message">{{ message }}</p>
+            {% else %}
+                <img class="graph-img" src="{{ url_for('static', filename='movie_rating_chart.png') }}" alt="IMDB Ratings Chart">
+            {% endif %}        
+        </ul>
+    </section>
+
+    <section class="chart-box">
+        <h3>Graph 2: Genre Distribution</h3>
+        <ul>
+            <img class="graph-img" src="{{ url_for('static', filename='genre_chart.png') }}" alt="Genre Chart">
+        </ul>
+    </section>
+</div>
+
+{% endblock %}
