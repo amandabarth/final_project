@@ -4,9 +4,9 @@ import pandas as pd
 import datetime
 from flask import render_template
 import matplotlib
-matplotlib.use('Agg')  # Use non-GUI backend
+# Make sure graphs dont show up as GUIs
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
 
 
 app = flask.Flask(__name__)
@@ -335,7 +335,7 @@ def graph1(user_id):
     if df.empty:
         return render_template("graph.html", user_id=user_id, chart_url=None, message="No movie data available.")
 
-    # Generate the histogram
+    # histogram
     plt.figure(figsize=(10, 7))
     df['IMDB_Rating'].hist(bins=15, color='salmon', edgecolor='black')
     plt.title("Distribution of IMDB Ratings")
@@ -344,7 +344,7 @@ def graph1(user_id):
     plt.tight_layout()
     plt.grid(False)
 
-    # Save chart to static
+    # Save chart to static folder
     chart_path = "static/movie_rating_chart.png"
     plt.savefig(chart_path)
     plt.close()
@@ -360,11 +360,11 @@ def graph2(user_id):
     df = pd.read_sql_query("SELECT Genre FROM Movies", con)
     con.close()
 
-    # Split genres and count them
+    # by genre
     df['Genre'] = df['Genre'].str.split(', ')
     genre_counts = df.explode('Genre')['Genre'].value_counts().head(10)
 
-    # Plot
+    # barchart
     plt.figure(figsize=(15, 10))
     genre_counts.plot(kind='bar', color='skyblue')
     plt.title('Top 10 Genres by Movie Count')
@@ -377,37 +377,6 @@ def graph2(user_id):
     plt.close()
 
     return render_template('graph.html',user_id=user_id, chart_url=chart_path)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

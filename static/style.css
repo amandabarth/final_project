@@ -178,9 +178,6 @@ button {
     
 }
 
-
-
-
 /* more form styling for user info page */
 .sign-in-form input[type="text"],
 .sign-in-form input[type="password"] {
@@ -269,28 +266,6 @@ button {
     margin-bottom: 1.5rem;
     font-size: 1.1rem;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* login error message */
 .error-message{
