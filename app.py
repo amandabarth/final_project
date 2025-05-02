@@ -326,14 +326,14 @@ def remove_user(user_id):
     
 
 
-@app.route("/graph1")
-def graph1():
+@app.route("/graph1/<user_id>")
+def graph1(user_id):
     con = sqlite3.connect("movies.db")
     df = pd.read_sql_query("SELECT Series_Title, IMDB_Rating FROM Movies WHERE IMDB_Rating IS NOT NULL", con)
     con.close()
 
     if df.empty:
-        return render_template("graph.html", chart_url=None, message="No movie data available.")
+        return render_template("graph.html", user_id=user_id, chart_url=None, message="No movie data available.")
 
     # Generate the histogram
     plt.figure(figsize=(10, 7))
@@ -349,13 +349,13 @@ def graph1():
     plt.savefig(chart_path)
     plt.close()
 
-    return render_template("graph.html", chart_url=chart_path, message=None)
+    return render_template("graph.html", user_id=user_id, chart_url=chart_path, message=None)
 
 
 
 
-@app.route('/graph2')
-def graph2():
+@app.route('/graph2/<user_id>')
+def graph2(user_id):
     con = sqlite3.connect("movies.db")
     df = pd.read_sql_query("SELECT Genre FROM Movies", con)
     con.close()
@@ -376,7 +376,7 @@ def graph2():
     plt.savefig(chart_path)
     plt.close()
 
-    return render_template('graph.html', chart_url=chart_path)
+    return render_template('graph.html',user_id=user_id, chart_url=chart_path)
 
 
 
